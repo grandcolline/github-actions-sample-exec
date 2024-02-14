@@ -16,7 +16,13 @@ jobs:
           repository: grandcolline/github-actions-sample
           path: .github
 
-      - name: Hello world action step
+      - name: typescript actions
+        uses: ./.github/ts-sample
+        id: hello-ts
+        with:
+          who-to-greet: 'Mona the Octocat'
+
+      - name: javascript actions
         uses: ./.github/js-sample
         id: hello
         with:
