@@ -1,38 +1,27 @@
 on: [push]
 
 jobs:
-  hello_world_job:
+  setup:
     runs-on: ubuntu-latest
-    name: A job to say hello
+    timeout-minutes: 3
+    outputs:
+      targets: ${{ steps.build-matrix.outputs.targets }}
     steps:
-      # To use this repository's private action,
-      # you must check out the repository
-      - name: Checkout
-        uses: actions/checkout@v4
+      - name: Setup Dynamic Build Matrix
+        id: build-matrix
+        uses: grandcolline/github-actions-sample/.github/actions/matrix-test
 
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          repository: grandcolline/github-actions-sample
-          path: .github
-
-      - name: typescript actions
-        uses: ./.github/ts-sample
-        id: hello-ts
-        with:
-          who-to-greet: 'Mona the Octocat'
-
-      - name: composite actions
-        uses: ./.github/composite-sample
-        id: hello-composite
-
-      - name: javascript actions
-        uses: ./.github/js-sample
-        id: hello
-        with:
-          who-to-greet: 'Mona the Octocat'
-
-      # Use the output from the `hello` step
-      - name: Get the output time
-        # run: echo "Hello!"
-        run: echo "The time was ${{ steps.hello.outputs.time }}"
+  execute:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    needs:
+      - setup
+    strategy:
+      fail-fast: true
+      max-parallel: 3
+      matrix:
+        targets: ${{ fromJSON(needs.setup.outputs.targets) }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Execute Script
+        run: echo "${{ matrix.targets }}"
