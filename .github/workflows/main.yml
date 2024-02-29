@@ -9,7 +9,7 @@ jobs:
     steps:
       - name: Setup Dynamic Build Matrix
         id: build-matrix
-        uses: grandcolline/github-actions-sample/.github/actions/matrix-test
+        uses: grandcolline/github-actions-sample/.github/actions/matrix-test@main
 
   execute:
     runs-on: ubuntu-latest
